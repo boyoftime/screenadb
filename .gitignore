@@ -1,0 +1,11 @@
+# Made on each PC by screenadb itself
+settings.json
+shots/
+platform-tools/
+platform-tools.new/
+# The desktop shortcut points at this PC's own paths
+*.lnk
+# Python and backups
+__pycache__/
+*.pyc
+*.bak
