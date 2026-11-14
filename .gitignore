@@ -9,3 +9,7 @@ platform-tools.new/
 __pycache__/
 *.pyc
 *.bak
+# The exe build (py build_exe.py)
+build/
+dist/
+*.spec

@@ -45,12 +45,16 @@ except ImportError:
     raise SystemExit(1)
 
 VERSION = "1.2"
-HERE = Path(__file__).resolve().parent
+# Built into screenadb.exe (PyInstaller), the app's own files unpack to a temporary folder, while its shots, settings
+# and adb live beside the exe, so they stay put between runs.
+FROZEN = getattr(sys, "frozen", False)
+HERE = Path(sys.executable).resolve().parent if FROZEN else Path(__file__).resolve().parent
+ASSETS = Path(getattr(sys, "_MEIPASS", HERE))
 SHOTS = HERE / "shots"
 SETTINGS = HERE / "settings.json"
-ICON_ICO = HERE / "screenadb.ico"
-ICON_PNG = HERE / "screenadb.png"
-MAKER_LOGO = HERE / "someless_tricks.png"
+ICON_ICO = ASSETS / "screenadb.ico"
+ICON_PNG = ASSETS / "screenadb.png"
+MAKER_LOGO = ASSETS / "someless_tricks.png"
 # adb that screenadb downloads for itself lives here, beside the app.
 LOCAL_TOOLS = HERE / "platform-tools"
 PLATFORM_TOOLS_URL = "https://dl.google.com/android/repository/platform-tools-latest-windows.zip"
@@ -409,8 +413,13 @@ def set_clipboard(formats):
 
 def create_desktop_shortcut():
     """Puts a screenadb shortcut, with its icon, on the desktop (wherever Windows keeps it, OneDrive included)."""
-    pythonw = Path(sys.executable).with_name("pythonw.exe")
-    target = pythonw if pythonw.is_file() else Path(sys.executable)
+    if FROZEN:
+        # The exe starts itself and carries its own icon.
+        target, arguments, icon = Path(sys.executable), "", Path(sys.executable)
+    else:
+        pythonw = Path(sys.executable).with_name("pythonw.exe")
+        target = pythonw if pythonw.is_file() else Path(sys.executable)
+        arguments, icon = chr(34) + str(HERE / "screenadb.pyw") + chr(34), ICON_ICO
 
     def quoted(value):
         # Inside PowerShell's single quotes, a quote is written twice.
@@ -421,9 +430,9 @@ def create_desktop_shortcut():
         "$path = Join-Path $desktop 'screenadb.lnk'",
         "$link = (New-Object -ComObject WScript.Shell).CreateShortcut($path)",
         f"$link.TargetPath = {quoted(target)}",
-        f"$link.Arguments = {quoted(chr(34) + str(HERE / 'screenadb.pyw') + chr(34))}",
+        f"$link.Arguments = {quoted(arguments)}",
         f"$link.WorkingDirectory = {quoted(HERE)}",
-        f"$link.IconLocation = {quoted(str(ICON_ICO) + ',0')}",
+        f"$link.IconLocation = {quoted(str(icon) + ',0')}",
         "$link.Description = 'Phone screenshots over adb'",
         "$link.Save()",
         "Write-Output $path",

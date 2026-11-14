@@ -18,6 +18,10 @@
 </p>
 
 <p align="center">
+  <a href="https://github.com/boyoftime/screenadb/releases/latest/download/screenadb-1.2-windows.zip"><img alt="Download for Windows" src="https://img.shields.io/badge/Download%20for%20Windows-screenadb.zip-FF444F?style=for-the-badge&logo=windows&logoColor=white"></a>
+</p>
+
+<p align="center">
   <img src="docs/hero.png" alt="screenadb in dark and light themes, and its Settings page" width="100%">
 </p>
 
@@ -42,7 +46,7 @@ Press **C** and the phone's screen is on your clipboard, ready to paste. Press *
 - **No adb? No problem.** screenadb offers to download Google's official platform-tools (about 8 MB) into its own
   folder.
 - **Dark and light themes**, sharp on high-DPI screens, and a **keep on top** pin for working alongside your editor.
-- **One file**, plain Python. Pillow is the only dependency.
+- **Nothing to install.** Download the zip, unzip it, run `screenadb.exe`. Python is built in.
 
 ## Screenshots
 
@@ -53,7 +57,27 @@ Press **C** and the phone's screen is on your clipboard, ready to paste. Press *
 
 ## Install
 
-You need **Windows 10 or 11** and **Python 3.8+**.
+You need **Windows 10 or 11**. There's no Python or anything else to install: it's all inside.
+
+1. Download **[screenadb-1.2-windows.zip](https://github.com/boyoftime/screenadb/releases/latest/download/screenadb-1.2-windows.zip)**
+   from the [latest release](https://github.com/boyoftime/screenadb/releases/latest).
+2. Unzip it anywhere, for example into `Documents`.
+3. Open the `screenadb` folder and run **`screenadb.exe`**.
+
+Then open **Settings › Create desktop shortcut** to launch it from the desktop with its own icon.
+
+Keep the folder together: `screenadb.exe` needs the `_internal` folder beside it. Your shots and settings are saved
+in the same folder.
+
+> **Windows SmartScreen** may warn the first time, because the exe isn't code-signed. Click **More info › Run
+> anyway**.
+
+> If adb isn't installed, screenadb says so and offers **Install adb**. It uses an adb already on your `PATH` or in
+> the Android SDK if it finds one.
+
+### Run from source (for developers)
+
+With **Python 3.8+**:
 
 ```powershell
 git clone https://github.com/boyoftime/screenadb.git
@@ -62,10 +86,8 @@ py -m pip install -r requirements.txt
 pyw screenadb.pyw
 ```
 
-Then open **Settings › Create desktop shortcut** to launch it from the desktop with its own icon.
-
-> If adb isn't installed, screenadb says so and offers **Install adb**. It uses an adb already on your `PATH` or in
-> the Android SDK if it finds one.
+To build the zip yourself: `py -m pip install pyinstaller`, then `py build_exe.py`. It writes
+`dist/screenadb-<version>-windows.zip`.
 
 ## Connect your phone
 
@@ -113,6 +135,7 @@ unpacked pixels. Phones without `gzip` fall back to PNG automatically.
 | `screenadb.pyw` | The whole app |
 | `screenadb.png`, `screenadb.ico` | The icon for the window, shortcut and taskbar |
 | `make_icon.py` | Draws the icon; run it again after changing the design |
+| `build_exe.py` | Builds the Windows zip with Python built in |
 | `docs/` | The screenshots in this README |
 
 On first run, screenadb also creates `settings.json` (theme, pin, window position, Wi-Fi phones), `shots/` and,
